@@ -93,7 +93,7 @@ def draw_chess_pieces(board_start_x, board_start_y, square_size, screen):
                 screen.blit(image, (x, y))
  
 
-    #screen.blit(image, (board_start_x - 14, board_start_y + square_size-10-square_size/2))
+    screen.blit(image, (board_start_x - 14, board_start_y + square_size-10-square_size/2))
 '''
 if __name__ == "__main__":
     main()

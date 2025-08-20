@@ -1,9 +1,10 @@
+from chess_func import ChessUtils
 class Chess:
     def __init__(self):
         self.board = [
             ["--","--","--","--","bK","--","--","bR"], 
             ["bP","bP","bP","bP","bP","bP","bP","bP"], 
-            ["--","--","--","--","--","--","--","--"],
+            ["--","--","--","--","--","wP","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
@@ -40,105 +41,39 @@ class Chess:
     
     #return valid moves for knight
     def get_move_knight(self, row, col):
-        valid_moves = []
         knight_moves = [(1,2), (1,-2),
                         (2,1), (2,-1),
                         (-1,2), (-1,-2),
                         (-2,1), (-2,-1)]
         piece_color = self.board[row][col][0]
         
-        for i in range(len(knight_moves)):
-            new_row = row+knight_moves[i][0]
-            new_col = col+knight_moves[i][1]
-            if 0 <= new_row < len(self.board) and 0 <= new_col < len(self.board[0]):
-                if self.board[new_row][new_col] == "--":
-                    (valid_moves).append((new_row, new_col))
-
-                elif self.board[new_row][new_col][0] != piece_color:
-                    (valid_moves).append((new_row, new_col))
-                elif self.board[new_row][new_col][0] == piece_color:
-                    pass
-        return valid_moves
+        return ChessUtils.move_noSlide(self.board,knight_moves,piece_color, row, col)
     
     #return valid moves for bishop
     def get_move_bishop(self,row,col):
-        valid_moves = []
         bishop_moves = [(1,1), (1,-1), (-1,1), (-1,-1)]
         piece_color = self.board[row][col][0]
-        for i in range(len(bishop_moves)):
-            new_row = row+bishop_moves[i][0]
-            new_col = col+bishop_moves[i][1]
-            while True:
-
-                if 0 <= new_row < len(self.board) and 0 <= new_col < len(self.board[0]) and self.board[new_row][new_col][0] != piece_color:
-                    (valid_moves).append((new_row, new_col))
-                    if self.board[new_row][new_col][0] != piece_color and self.board[new_row][new_col] != "--":
-                        break
-                    
-                else:
-                    break
-                new_row = new_row+bishop_moves[i][0]
-                new_col = new_col+bishop_moves[i][1]
-        return valid_moves
+        return ChessUtils.move_slide(self.board,bishop_moves,piece_color, row, col)
     
     #return valid moves for rook
     def get_move_rook(self,row,col):
-        valid_moves = []
         rook_moves = [(1,0), (0,1), (-1,0), (0,-1)]
         piece_color = self.board[row][col][0]
-        for i in range(len(rook_moves)):
-            new_row = row+rook_moves[i][0]
-            new_col = col+rook_moves[i][1]
-            while True:
+        return ChessUtils.move_slide(self.board,rook_moves,piece_color, row, col)
 
-                if 0 <= new_row < len(self.board) and 0 <= new_col < len(self.board[0]) and self.board[new_row][new_col][0] != piece_color:
-                    (valid_moves).append((new_row, new_col))
-                    if self.board[new_row][new_col][0] != piece_color and self.board[new_row][new_col] != "--":
-                        break
-                    
-                else:
-                    break
-                new_row = new_row+rook_moves[i][0]
-                new_col = new_col+rook_moves[i][1]
-        return valid_moves
     
     #return valid moves for queen
     def get_move_queen(self,row,col):
-        valid_moves = []
         queen_moves = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
         piece_color = self.board[row][col][0]
-        for i in range(len(queen_moves)):
-            new_row = row+queen_moves[i][0]
-            new_col = col+queen_moves[i][1]
-            while True:
+        return ChessUtils.move_slide(self.board,queen_moves,piece_color, row, col)
 
-                if 0 <= new_row < len(self.board) and 0 <= new_col < len(self.board[0]) and self.board[new_row][new_col][0] != piece_color:
-                    (valid_moves).append((new_row, new_col))
-                    if self.board[new_row][new_col][0] != piece_color and self.board[new_row][new_col] != "--":
-                        break
-                    
-                else:
-                    break
-                new_row = new_row+queen_moves[i][0]
-                new_col = new_col+queen_moves[i][1]
-        return valid_moves
 
     #return valid king moves
     def get_move_king(self,row,col):
-        valid_moves = []
         king_moves = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
         piece_color = self.board[row][col][0]
-        for i in range(len(king_moves)):
-            new_row = row+king_moves[i][0]
-            new_col = col+king_moves[i][1]
-            if 0 <= new_row < len(self.board) and 0 <= new_col < len(self.board[0]):
-                if self.board[new_row][new_col] == "--":
-                    (valid_moves).append((new_row, new_col))
-                elif self.board[new_row][new_col][0] != piece_color:
-                    (valid_moves).append((new_row, new_col))
-                elif self.board[new_row][new_col][0] == piece_color:
-                    pass
-        valid_moves.append(self.get_castle(row,col))
+        valid_moves = ChessUtils.move_noSlide(self.board,king_moves,piece_color, row, col) + self.get_castle(row,col)
         return valid_moves
     
     def get_castle(self,row,col):
@@ -165,22 +100,42 @@ class Chess:
 
     def get_move_pawn(self,row,col):
         valid_moves = []
-        pawn_moves = [(1,0),(-1,0)]
-        piece_color = self.board[row][col][0]
-        for i in range(len(pawn_moves)):
-            new_row = row+pawn_moves[i][0]
-            new_col = col+pawn_moves[i][1]
-            if 0 <= new_row < len(self.board) and 0 <= new_col < len(self.board[0]):
-                if self.board[new_row][new_col] == "--":
-                    (valid_moves).append((new_row, new_col))
-
-                elif self.board[new_row][new_col][0] != piece_color:
-                    (valid_moves).append((new_row, new_col))
-                elif self.board[new_row][new_col][0] == piece_color:
-                    pass
+        valid_moves += self.basic_pawn(row,col)
+        valid_moves += self.two_move_pawn(row,col)
+        valid_moves += self.take_pawn(row,col)
         return valid_moves
         
         
+    def basic_pawn(self,row,col):
+        piece_color = self.board[row][col][0]
+        if piece_color == "b":
+            pawn_moves = [(1,0)]
+        elif piece_color == "w":
+            pawn_moves = [(-1,0)]
+        return ChessUtils.move_pawn(self.board,pawn_moves, row, col)
+
+    def two_move_pawn(self,row,col):
+        piece_color = self.board[row][col][0]
+        if piece_color == "b":
+            pawn_moves = [(2,0)]
+            if row == 1:
+                return ChessUtils.move_pawn(self.board,pawn_moves, row, col)
+        elif piece_color == "w":
+            pawn_moves = [(-2,0)]
+            if row == 6:
+                return ChessUtils.move_pawn(self.board,pawn_moves, row, col)
+        return []
+    
+    def take_pawn(self,row,col):
+        piece_color = self.board[row][col][0]
+        if piece_color == "b":
+            pawn_moves = [(1,1),(1,-1)]
+            return ChessUtils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
+        elif piece_color == "w":
+            pawn_moves = [(-1,1),(-1,-1)]
+            return ChessUtils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
+        return []
+
         
 chess = Chess()
 moves = chess.get_legal_moves(1, 4)
