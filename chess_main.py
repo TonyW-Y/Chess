@@ -48,7 +48,7 @@ def chess_squares(screen):
             pygame.draw.rect(screen, color, (x, y, round(square_size), round(square_size)))
      
     coordinates(board_start_x, board_start_y, square_size, screen)
-    draw_chess_pieces(board_start_x, board_start_y, square_size, screen)
+    #draw_chess_pieces(board_start_x, board_start_y, square_size, screen)
 
 def coordinates(board_start_x, board_start_y, square_size, screen):
     for row in range(8):
@@ -67,7 +67,7 @@ def coordinates(board_start_x, board_start_y, square_size, screen):
                 screen.blit(text_surface, (board_start_x - 14, board_start_y + col*square_size-10-square_size/2))
                 screen.blit(text_surface, (board_start_x + square_size*8+6, board_start_y + col*square_size-10-square_size/2))
 
-    
+    '''
 def draw_chess_pieces(board_start_x, board_start_y, square_size, screen):
     board = chess.Board()
     PIECE_IMAGES = {"wP": pygame.image.load("assets/wP.png"),
@@ -93,7 +93,7 @@ def draw_chess_pieces(board_start_x, board_start_y, square_size, screen):
                 screen.blit(image, (x, y))
  
 
-    screen.blit(image, (board_start_x - 14, board_start_y + square_size-10-square_size/2))
-
+    #screen.blit(image, (board_start_x - 14, board_start_y + square_size-10-square_size/2))
+'''
 if __name__ == "__main__":
     main()
