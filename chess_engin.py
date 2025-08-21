@@ -76,6 +76,7 @@ class Chess:
         valid_moves = ChessUtils.move_noSlide(self.board,king_moves,piece_color, row, col) + self.get_castle(row,col)
         return valid_moves
     
+    #return valid castle moves
     def get_castle(self,row,col):
         valid_moves = []
         piece_color = self.board[row][col][0]
@@ -97,7 +98,7 @@ class Chess:
                     valid_moves.append((7,6))
             
         return valid_moves
-
+    #return valid pawn moves
     def get_move_pawn(self,row,col):
         valid_moves = []
         valid_moves += self.basic_pawn(row,col)
@@ -105,7 +106,7 @@ class Chess:
         valid_moves += self.take_pawn(row,col)
         return valid_moves
         
-        
+    #return basic pawn moves(move forward by 1)
     def basic_pawn(self,row,col):
         piece_color = self.board[row][col][0]
         if piece_color == "b":
@@ -114,6 +115,7 @@ class Chess:
             pawn_moves = [(-1,0)]
         return ChessUtils.move_pawn(self.board,pawn_moves, row, col)
 
+    #return starting pawn moves(move forward by 2)
     def two_move_pawn(self,row,col):
         piece_color = self.board[row][col][0]
         if piece_color == "b":
@@ -126,6 +128,7 @@ class Chess:
                 return ChessUtils.move_pawn(self.board,pawn_moves, row, col)
         return []
     
+    #return pawn capturing moves
     def take_pawn(self,row,col):
         piece_color = self.board[row][col][0]
         if piece_color == "b":
