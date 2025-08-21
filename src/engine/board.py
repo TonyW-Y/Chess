@@ -14,7 +14,7 @@ class Chess:
         #R1 is queen side rook
         #R2 is king side rook
         self.has_moved = {"bR1":0, "bR2":0, "bK":0,
-                          "wR1":0, "wR1":0, "wK":0
+                          "wR1":0, "wR2":0, "wK":0
                           }
     
     #print the chess board
