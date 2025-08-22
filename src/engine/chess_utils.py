@@ -1,4 +1,4 @@
-class ChessUtils:
+class Chess_Utils:
     def move_noSlide(board, piece_move, piece_color, row, col):
         valid_moves = []        
         for i in range(len(piece_move)):
@@ -47,5 +47,5 @@ class ChessUtils:
             new_col = col+pawn_moves[i][1]
             if 0 <= new_row < len(board) and 0 <= new_col < len(board[0]):
                 if  board[new_row][new_col] != "--" and board[new_row][new_col][0] != piece_color:
-                    valid_moves.append((new_row, new_col))
+                    (valid_moves).append((new_row, new_col))
         return valid_moves
