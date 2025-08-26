@@ -14,11 +14,14 @@ class Engine:
     def play_turn(self, row, col, new_row, new_col):
         legal_moves = self.legality.get_legal_moves(row,col)
         
-        if (new_row, new_col) in legal_moves and self.make_unmake.turn() == self.board.board[row][col][0]:
-            self.board.save_move(row, col, new_row, new_col)
-            print("move made!")
+        if (new_row, new_col) in legal_moves:
+            if self.make_unmake.turn(row, col) == self.board.board[row][col][0]:
+                self.board.save_move(row, col, new_row, new_col)
+                print("move made!")
+            else:
+                print("not your turn!")
         else:
-            print("move not made!")
+            print("not a legal move!")
         
     def undo(self):
         self.board.undo_move()

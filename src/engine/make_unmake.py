@@ -7,23 +7,42 @@ class Make_Unmake:
     def __init__(self, board, has_moved):
         self.board = board
         self.has_moved = has_moved
-        self.color = "b"
+        self.color = "w"
         
-    def turn(self):
-        return self.color
+    def turn(self, row, col):
+        if self.board[row][col][0] == "b" and self.color == "b":
+            self.color = "b"
+            self.color_change()
+            return "b"
+
+        elif self.board[row][col][0] == "w" and self.color == "w":
+            self.color = "w"
+            self.color_change()
+            return "w"
         
+        else:
+            return "n"
+        
+    
+    def color_change(self):
+        if self.color == "b":
+            self.color = "w"
+            return self.color
+        elif self.color == "w":
+            self.color = "b"
+            return self.color
+
+                
     def make_move(self, row, col, new_row, new_col):
         if self.board[row][col][0] == "b" and self.color == "b":
             self.check_move(row, col, new_row, new_col)
-            self.color = "w"
             return self.board
         elif self.board[row][col][0] == "w" and self.color == "w":
             self.check_move(row, col, new_row, new_col)
-            self.color = "b"
             return self.board
         else:
+            self.check_move(row, col, new_row, new_col)
             return self.board
-
                 
             
         

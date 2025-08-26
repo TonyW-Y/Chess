@@ -123,4 +123,25 @@ class Legality:
             return Chess_Utils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
         return []
 
+    def is_check(self, color):
+        king_pos = None
+        for row in range(8):
+            for col in range(8):
+                if self.board[row][col] == color + "K":
+                    king_pos = (row,col)
+                    break
+        
+        if color == b:
+            enemy_color = "w"
+        else:
+            enemy_color = "b"
+        
+        for row in range(8):
+            for col in range(8):
+                if self.board[row][col] != "--" and self.board[row][col][0] == enemy_color:
+                    enemy_moves = self.get_legal_moves(row,col)
+                    if king_pos in enemy_moves:
+                        return True
+        return False
+        
         
