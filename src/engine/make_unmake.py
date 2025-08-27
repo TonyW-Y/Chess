@@ -1,13 +1,9 @@
-from legality import Legality
-from chess_utils import Chess_Utils
-
-
 class Make_Unmake:
     
-    def __init__(self, board, has_moved):
+    def __init__(self, board, has_moved, color):
         self.board = board
         self.has_moved = has_moved
-        self.color = "w"
+        self.color = color
         
     def turn(self, row, col):
         if self.board[row][col][0] == "b" and self.color == "b":
@@ -36,12 +32,15 @@ class Make_Unmake:
     def make_move(self, row, col, new_row, new_col):
         if self.board[row][col][0] == "b" and self.color == "b":
             self.check_move(row, col, new_row, new_col)
+            self.color_change()
             return self.board
         elif self.board[row][col][0] == "w" and self.color == "w":
             self.check_move(row, col, new_row, new_col)
+            self.color_change()
             return self.board
         else:
             self.check_move(row, col, new_row, new_col)
+            self.color_change()
             return self.board
                 
             

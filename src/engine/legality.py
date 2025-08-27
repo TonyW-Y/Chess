@@ -1,10 +1,10 @@
 from chess_utils import Chess_Utils
-
 class Legality:
     
-    def __init__(self,board, has_moved):
-        self.board = board
-        self.has_moved = has_moved
+    def __init__(self, board_obj):          # only need Chess_Board now
+        self.board_obj = board_obj
+        self.board = board_obj.board        # the 2D list
+        self.has_moved = board_obj.has_moved
     
     def get_legal_moves(self, row, col):
         piece = self.board[row][col]
@@ -131,10 +131,12 @@ class Legality:
                     king_pos = (row,col)
                     break
         
-        if color == b:
+        if color == "b":
             enemy_color = "w"
         else:
             enemy_color = "b"
+            
+        
         
         for row in range(8):
             for col in range(8):
@@ -144,4 +146,14 @@ class Legality:
                         return True
         return False
         
-        
+    def filter_move(self, row, col):
+        moves = self.get_legal_moves(row,col)
+        color = self.board[row][col][0]
+        legal_moves = []
+        for i in range(len(moves)):
+            self.board_obj.save_move(row, col, moves[i][0], moves[i][1])
+    
+            if not self.is_check(color):
+                legal_moves.append(moves[i])
+            self.board_obj.undo_move()
+        return legal_moves

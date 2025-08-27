@@ -1,12 +1,11 @@
 import copy
-from legality import Legality
-from chess_utils import Chess_Utils
 from make_unmake import Make_Unmake
+from legality import Legality
 class Chess_Board:
     def __init__(self):
         #starting board
         self.board = [
-            ["bR","bN","bB","BQ","bK","bB","bN","bR"], 
+            ["bR","bN","bB","bQ","bK","bB","bN","bR"], 
             ["bP","bP","bP","bP","bP","bP","bP","bP"], 
             ["--","--","--","--","--","--","--","--"],
             ["--","--","--","--","--","--","--","--"],
@@ -15,7 +14,7 @@ class Chess_Board:
             ["wP","wP","wP","wP","wP","wP","wP","wP"], 
             ["wR","wN","wB","wQ","wK","wB","wN","wR"]
         ]
-        
+        self.color = "w"
         #board history
         self.history = []
         
@@ -31,18 +30,21 @@ class Chess_Board:
     
     
     def save_move(self, row, col, new_row, new_col):
-        move = Make_Unmake(self.board, self.has_moved)
-        (self.history).append(copy.deepcopy(self.board))
+        move = Make_Unmake(self.board, self.has_moved, self.color)
+        (self.history).append((copy.deepcopy(self.board), copy.deepcopy(self.has_moved), self.color))
         self.board = move.make_move(row, col, new_row, new_col)
+        self.color = move.color
         return self.board
     
     def undo_move(self):
-        self.history.pop()
         if self.history:
-            self.board = self.history[-1]
+            last_board, last_has_moved, last_color = self.history.pop()
+            self.board = last_board
+            self.has_moved = last_has_moved
+            self.color = last_color
         return self.board
     
-    
-"""board = Chess_Board()
-legal = Legality(board.board, board.has_moved)
-print(legal.get_legal_moves(1,4))"""
+if __name__ == "__main__": 
+    board = Chess_Board()
+    legal = Legality(board)
+    print(legal.get_legal_moves(1,4))
