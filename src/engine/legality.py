@@ -59,10 +59,12 @@ class Legality:
 
 
     #return valid king moves
-    def get_move_king(self,row,col):
+    def get_move_king(self,row,col, include_castle=True):
         king_moves = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
         piece_color = self.board[row][col][0]
-        valid_moves = Chess_Utils.move_noSlide(self.board,king_moves,piece_color, row, col) + self.get_castle(row,col)
+        valid_moves = Chess_Utils.move_noSlide(self.board,king_moves,piece_color, row, col)
+        if include_castle:
+            valid_moves += self.get_castle(row, col)
         return valid_moves
     
     #return valid castle moves
@@ -146,7 +148,7 @@ class Legality:
         for row in range(8):
             for col in range(8):
                 if self.board[row][col] != "--" and self.board[row][col][0] == enemy_color:
-                    enemy_moves = self.get_legal_moves(row,col)
+                    enemy_moves = self.get_move_king(row, col, include_castle=False)
                     if king_pos in enemy_moves:
                         return True
         return False
