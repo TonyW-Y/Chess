@@ -1,11 +1,16 @@
 from chess_utils import Chess_Utils
+
 class Legality:
     
-    def __init__(self, board_obj):          # only need Chess_Board now
-        self.board_obj = board_obj
-        self.board = board_obj.board        # the 2D list
-        self.has_moved = board_obj.has_moved
-    
+    def __init__(self, board_obj):
+        self.board_obj = board_obj            # full Chess_Board
+    @property
+    def board(self):
+        return self.board_obj.board           # always fetch live board
+    @property
+    def has_moved(self):
+        return self.board_obj.has_moved
+
     def get_legal_moves(self, row, col):
         piece = self.board[row][col]
         if piece == "--":
@@ -157,3 +162,6 @@ class Legality:
                 legal_moves.append(moves[i])
             self.board_obj.undo_move()
         return legal_moves
+    
+
+    

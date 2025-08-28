@@ -32,3 +32,6 @@ print("Move black knight (0,6) -> (2,5):")
 engine.play_turn(0, 3, 4, 7)
 print_board(board)
 
+engine.play_turn(6, 6, 5, 6)
+print_board(board)
+

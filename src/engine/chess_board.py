@@ -47,4 +47,5 @@ class Chess_Board:
 if __name__ == "__main__": 
     board = Chess_Board()
     legal = Legality(board)
-    print(legal.get_legal_moves(1,4))
+    print(legal.get_legal_moves(0, 3))
+    print(legal.get_legal_moves(7, 3))

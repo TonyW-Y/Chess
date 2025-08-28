@@ -1,0 +1,86 @@
+# ♟️ Chess Engine Project Checklist
+
+## Phase 1: Board & Basics
+- [x] Represent the board (8×8 matrix with pieces like "wP", "bK", "--").
+- [x] Implement a __str__ method to print the board.
+- [x] Add history tracking (list of previous board states).
+- [x] Add save_move and undo_move functions.
+- [x] Add has_moved tracking (kings & rooks for castling).
+
+## Phase 2: Piece Movement
+- [x] Pawn single-square move.
+- [x] Pawn double-square move from starting row.
+- [x] Pawn diagonal captures.
+- [x] Knight moves (L-shape, jump over pieces).
+- [x] Bishop moves (diagonals).
+- [x] Rook moves (straight lines).
+- [x] Queen moves (rook + bishop combined).
+- [x] King moves (1 square in all directions).
+- [x] Castling (both sides, check rook/king hasn’t moved).
+
+## Phase 3: Turn System
+- [x] Implement a variable to track whose turn it is.
+- [x] Prevent moving opponent’s piece out of turn.
+- [x] Flip turn after every valid move.
+- [x] Reject moves out of turn with a clear message.
+
+## Phase 4: Move Legality (King Safety)
+- [x] Detect if a move puts your own king in check.
+- [x] Prevent illegal moves that expose king.
+- [ ] Add pin detection (piece can’t move if it exposes king).
+- [ ] Ensure castling is blocked if king is in check or passes through check.
+
+## Phase 5: Special Rules
+- [ ] En Passant capture for pawns.
+- [ ] Pawn promotion (replace with queen, rook, bishop, knight).
+- [ ] Fifty-move rule.
+- [ ] Threefold repetition.
+- [ ] Insufficient material draw.
+
+## Phase 6: Game State Detection
+- [ ] Detect check.
+- [ ] Detect checkmate.
+- [ ] Detect stalemate.
+- [ ] Detect draw by rules (50-move, repetition, insufficient material).
+
+## Phase 7: Evaluation Function (for AI)
+- [ ] Simple material count (queen=9, rook=5, bishop=3, knight=3, pawn=1).
+- [ ] Piece-square tables (bonus for central pawns, developed knights, etc.).
+- [ ] King safety evaluation.
+- [ ] Mobility evaluation (count legal moves).
+- [ ] Pawn structure evaluation (doubled pawns, isolated pawns, etc.).
+
+## Phase 8: Search Algorithm (AI)
+- [ ] Implement minimax (2-ply).
+- [ ] Expand minimax to deeper ply (4, 6…).
+- [ ] Add alpha-beta pruning.
+- [ ] Add iterative deepening.
+- [ ] Add move ordering (evaluate best moves first).
+- [ ] Add transposition table (hashing).
+
+## Phase 9: Time Control
+- [ ] Add move timer (limit per move).
+- [ ] Add total time control.
+- [ ] Ensure AI respects time limits.
+
+## Phase 10: GUI Integration
+- [ ] Draw chess board with Pygame.
+- [ ] Draw pieces on the board.
+- [ ] Highlight selected piece + legal moves.
+- [ ] Click-to-move system.
+- [ ] Show captures.
+- [ ] Show history of moves (algebraic notation).
+- [ ] Add undo button.
+- [ ] Add restart game button.
+
+## Phase 11: Play Modes
+- [ ] Player vs Player (local).
+- [ ] Player vs AI.
+- [ ] AI vs AI (for testing).
+
+## Phase 12: Polish
+- [ ] Clean code into modules (engine, gui, tests).
+- [ ] Write unit tests for move generation, legality, and special rules.
+- [ ] Add config file for piece values, time control, etc.
+- [ ] Optimize performance (profiling slow parts).
+- [ ] Optional: Add sound effects & animations in GUI.
