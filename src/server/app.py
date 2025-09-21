@@ -34,8 +34,8 @@ ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:8000",
-    # Add your production frontend URL here when deployed
-    # "https://your-frontend-domain.vercel.app"
+    "https://chess-frontend-fz6z.onrender.com",  # Production frontend
+    "https://chess-backend-fr4r.onrender.com"   # Backend URL for reference
 ]
 
 # Application lifespan
