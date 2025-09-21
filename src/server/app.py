@@ -82,13 +82,10 @@ if IS_PRODUCTION:
 # CORS middleware (add last)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_origin_regex=r"https?://([a-zA-Z0-9-]+\.)*onrender\.com",
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
-    expose_headers=["Content-Length", "X-Request-ID"],
-    max_age=600,  # Cache preflight request for 10 minutes
+    allow_origins=["*"],  # TEMP: allow all origins to validate CORS as the issue
+    allow_credentials=False,  # must be false when using wildcard origins
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 # Static files configuration
