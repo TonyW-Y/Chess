@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing import List, Tuple, Optional
 import time
 from contextlib import asynccontextmanager
+from fastapi.responses import JSONResponse
 
 # Import after environment check to support hot reload in development
 if os.getenv("ENV") != "development":
@@ -62,13 +63,23 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Middleware order matters. Add redirect and other middleware first, then CORS LAST
+# so that CORS headers are added even on redirects and errors.
+
 # Security headers middleware
 app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=["*"],  # In production, replace with your domain
 )
 
-# CORS middleware
+# GZip compression for responses
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Force HTTPS in production (added before CORS so CORS can wrap it)
+if IS_PRODUCTION:
+    app.add_middleware(HTTPSRedirectMiddleware)
+
+# CORS middleware (add last)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -78,13 +89,6 @@ app.add_middleware(
     expose_headers=["Content-Length", "X-Request-ID"],
     max_age=600,  # Cache preflight request for 10 minutes
 )
-
-# GZip compression for responses
-app.add_middleware(GZipMiddleware, minimum_size=1000)
-
-# Force HTTPS in production
-if IS_PRODUCTION:
-    app.add_middleware(HTTPSRedirectMiddleware)
 
 # Static files configuration
 if IS_PRODUCTION:

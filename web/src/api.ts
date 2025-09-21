@@ -27,7 +27,8 @@ export async function getLegal(row: number, col: number): Promise<[number, numbe
   });
   if (!res.ok) return [];
   const data = await res.json();
-  return data.moves || [];
+  // Backend returns { legal_moves: [...] }
+  return data.legal_moves || data.moves || [];
 }
 
 export async function makeMove(from_row: number, from_col: number, to_row: number, to_col: number, promotion?: PromotionPiece) {
