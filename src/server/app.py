@@ -82,10 +82,13 @@ if IS_PRODUCTION:
 # CORS middleware (add last)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TEMP: allow all origins to validate CORS as the issue
-    allow_credentials=False,  # must be false when using wildcard origins
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"https?://([a-zA-Z0-9-]+\.)*onrender\.com",
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["Content-Length", "X-Request-ID"],
+    max_age=600,  # Cache preflight request for 10 minutes
 )
 
 # Static files configuration
@@ -196,7 +199,7 @@ async def legal(coord: CoordBody):
             detail={"error": "Invalid coordinates", "code": "invalid_coordinates"}
         )
     return {
-        "legal_moves": app.state.engine.get_legal_moves(coord.row, coord.col)
+        "legal_moves": app.state.engine.legality.get_legal_moves(coord.row, coord.col)
     }
 
 @app.post("/move")
