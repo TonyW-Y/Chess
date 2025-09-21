@@ -1,4 +1,4 @@
-from chess_utils import Chess_Utils
+from .chess_utils import Chess_Utils
 
 class Legality:
     
@@ -35,7 +35,6 @@ class Legality:
                         (-1,2), (-1,-2),
                         (-2,1), (-2,-1)]
         piece_color = self.board[row][col][0]
-        
         return Chess_Utils.move_noSlide(self.board,knight_moves,piece_color, row, col)
     
     #return valid moves for bishop
@@ -64,7 +63,18 @@ class Legality:
         piece_color = self.board[row][col][0]
         valid_moves = Chess_Utils.move_noSlide(self.board,king_moves,piece_color, row, col)
         if include_castle:
-            valid_moves += self.get_castle(row, col)
+            # Only add castle squares that are not through check and king not in check
+            for r,c in self.get_castle(row, col):
+                # Determine intermediate squares the king passes through (including destination)
+                path = []
+                if c == 6:  # king side
+                    path = [(row, 5), (row, 6)]
+                elif c == 2:  # queen side
+                    path = [(row, 3), (row, 2)]
+                color = piece_color
+                # King cannot castle out of, through, or into check
+                if not self.is_square_attacked(color, (row, col)) and all(not self.is_square_attacked(color, sq) for sq in path):
+                    valid_moves.append((r, c))
         return valid_moves
     
     #return valid castle moves
@@ -112,11 +122,14 @@ class Legality:
         if piece_color == "b":
             pawn_moves = [(2,0)]
             if row == 1:
-                return Chess_Utils.move_pawn(self.board,pawn_moves, row, col)
+                # both intermediate and destination must be empty
+                if self.board[row+1][col] == "--" and self.board[row+2][col] == "--":
+                    return [(row+2, col)]
         elif piece_color == "w":
             pawn_moves = [(-2,0)]
             if row == 6:
-                return Chess_Utils.move_pawn(self.board,pawn_moves, row, col)
+                if self.board[row-1][col] == "--" and self.board[row-2][col] == "--":
+                    return [(row-2, col)]
         return []
     
     #return pawn capturing moves
@@ -124,33 +137,85 @@ class Legality:
         piece_color = self.board[row][col][0]
         if piece_color == "b":
             pawn_moves = [(1,1),(1,-1)]
-            return Chess_Utils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
+            moves = Chess_Utils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
+            # en passant: target square is one rank down and diagonal
+            ep = self.board_obj.en_passant_target
+            if ep:
+                for dc in (1, -1):
+                    r, c = row + 1, col + dc
+                    if 0 <= c < 8 and ep == (r, c) and self.board[r][c] == "--" and self.board[row][c] == "wP":
+                        moves.append((r, c))
+            return moves
         elif piece_color == "w":
             pawn_moves = [(-1,1),(-1,-1)]
-            return Chess_Utils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
+            moves = Chess_Utils.pawn_capture(self.board, pawn_moves, piece_color, row, col)
+            ep = self.board_obj.en_passant_target
+            if ep:
+                for dc in (1, -1):
+                    r, c = row - 1, col + dc
+                    if 0 <= c < 8 and ep == (r, c) and self.board[r][c] == "--" and self.board[row][c] == "bP":
+                        moves.append((r, c))
+            return moves
         return []
 
     def is_check(self, color):
+        # Find king position
         king_pos = None
-        for row in range(8):
-            for col in range(8):
-                if self.board[row][col] == color + "K":
-                    king_pos = (row,col)
+        for r in range(8):
+            for c in range(8):
+                if self.board[r][c] == color + "K":
+                    king_pos = (r, c)
                     break
-        
-        if color == "b":
-            enemy_color = "w"
-        else:
-            enemy_color = "b"
-            
-        
-        
-        for row in range(8):
-            for col in range(8):
-                if self.board[row][col] != "--" and self.board[row][col][0] == enemy_color:
-                    enemy_moves = self.get_move_king(row, col, include_castle=False)
-                    if king_pos in enemy_moves:
+            if king_pos:
+                break
+        if king_pos is None:
+            return False
+        return self.is_square_attacked(color, king_pos)
+
+    def is_square_attacked(self, color, square):
+        # Returns True if square for side `color` is attacked by opponent
+        enemy = "w" if color == "b" else "b"
+        rK, cK = square
+        # Check knight attacks
+        knight_moves = [(1,2), (1,-2), (2,1), (2,-1), (-1,2), (-1,-2), (-2,1), (-2,-1)]
+        for dr, dc in knight_moves:
+            r, c = rK + dr, cK + dc
+            if 0 <= r < 8 and 0 <= c < 8 and self.board[r][c] == enemy + "N":
+                return True
+        # Check king adjacency (for completeness, not for castle)
+        king_moves = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)]
+        for dr, dc in king_moves:
+            r, c = rK + dr, cK + dc
+            if 0 <= r < 8 and 0 <= c < 8 and self.board[r][c] == enemy + "K":
+                return True
+        # Check rook/queen lines
+        for dr, dc in [(1,0), (-1,0), (0,1), (0,-1)]:
+            r, c = rK + dr, cK + dc
+            while 0 <= r < 8 and 0 <= c < 8:
+                sq = self.board[r][c]
+                if sq != "--":
+                    if sq[0] == enemy and (sq[1] == "R" or sq[1] == "Q"):
                         return True
+                    break
+                r += dr
+                c += dc
+        # Check bishop/queen diagonals
+        for dr, dc in [(1,1), (1,-1), (-1,1), (-1,-1)]:
+            r, c = rK + dr, cK + dc
+            while 0 <= r < 8 and 0 <= c < 8:
+                sq = self.board[r][c]
+                if sq != "--":
+                    if sq[0] == enemy and (sq[1] == "B" or sq[1] == "Q"):
+                        return True
+                    break
+                r += dr
+                c += dc
+        # Check pawn attacks (white pawns attack up: row-1; black pawns attack down: row+1)
+        pawn_dirs = [(-1,1), (-1,-1)] if enemy == "w" else [(1,1), (1,-1)]
+        for dr, dc in pawn_dirs:
+            r, c = rK + dr, cK + dc
+            if 0 <= r < 8 and 0 <= c < 8 and self.board[r][c] == enemy + "P":
+                return True
         return False
         
     def filter_move(self, row, col):
@@ -164,6 +229,30 @@ class Legality:
                 legal_moves.append(moves[i])
             self.board_obj.undo_move()
         return legal_moves
-    
 
-    
+    def get_all_legal_moves_for_color(self, color):
+        """Return a list of all legal moves for the side to move `color`.
+        Each move is represented as a tuple: (row, col, new_row, new_col).
+        """
+        moves = []
+        for r in range(8):
+            for c in range(8):
+                piece = self.board[r][c]
+                if piece != "--" and piece[0] == color:
+                    for nr, nc in self.filter_move(r, c):
+                        moves.append((r, c, nr, nc))
+        return moves
+
+    def is_checkmate(self, color):
+        """Return True if `color` is currently checkmated."""
+        # If there are any legal moves, it's not mate
+        if self.get_all_legal_moves_for_color(color):
+            return False
+        # No legal moves: if in check, it's checkmate
+        return self.is_check(color)
+
+    def is_stalemate(self, color):
+        """Return True if `color` is stalemated (no legal moves and not in check)."""
+        if self.get_all_legal_moves_for_color(color):
+            return False
+        return not self.is_check(color)

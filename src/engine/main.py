@@ -1,5 +1,5 @@
-from chess_board import Chess_Board
-from engine import Engine
+from .chess_board import Chess_Board
+from .engine import Engine
 
 def print_board(board):
     for row in board.board:  # board.board is your 2D list

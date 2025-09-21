@@ -1,7 +1,7 @@
-from legality import Legality
-from make_unmake import Make_Unmake
-from chess_utils import Chess_Utils
-from chess_board import Chess_Board
+from .legality import Legality
+from .make_unmake import Make_Unmake
+from .chess_utils import Chess_Utils
+from .chess_board import Chess_Board
 
 
 class Engine:
@@ -11,25 +11,36 @@ class Engine:
         self.legality = Legality(self.board)
         self.utils = Chess_Utils()
     
-    def play_turn(self, row, col, new_row, new_col):
+    def play_turn(self, row, col, new_row, new_col, promotion: str | None = None):
         legal_moves = self.legality.filter_move(row,col)
-        
         if (new_row, new_col) in legal_moves:
-            move_color = self.board.color
-            make_unmake = Make_Unmake(self.board.board, self.board.has_moved, move_color)
-            if make_unmake.turn(row, col) == self.board.board[row][col][0]:
-                self.board.save_move(row, col, new_row, new_col)
-                print("move made!")
-            elif make_unmake.turn(row, col) == "n":
-                print("wat")
-            
+            make_unmake = Make_Unmake(self.board)
+            turn_check = make_unmake.turn(row, col)
+            if turn_check == self.board.board[row][col][0]:
+                self.board.save_move(row, col, new_row, new_col, promotion)
+                return True, "move made"
+            elif turn_check == "n":
+                return False, "invalid move (turn)"
             else:
-                print("not your turn!")
+                return False, "not your turn"
         else:
-            print("not a legal move!")
+            return False, "not a legal move"
         
     def undo(self):
         self.board.undo_move()
+    
+    def get_game_status(self):
+        """Return a tuple (status, info) where:
+        - status is one of: 'in_progress', 'checkmate', 'stalemate'
+        - info for checkmate is the winner color: 'w' or 'b'; otherwise None
+        """
+        color_to_move = self.board.color
+        if self.legality.is_checkmate(color_to_move):
+            winner = 'w' if color_to_move == 'b' else 'b'
+            return 'checkmate', winner
+        if self.legality.is_stalemate(color_to_move):
+            return 'stalemate', None
+        return 'in_progress', None
         
 if __name__ == "__main__":
     def print_board(board):
