@@ -1,3 +1,4 @@
+from typing import Optional, Tuple
 from .legality import Legality
 from .make_unmake import Make_Unmake
 from .chess_utils import Chess_Utils
@@ -11,7 +12,7 @@ class Engine:
         self.legality = Legality(self.board)
         self.utils = Chess_Utils()
     
-    def play_turn(self, row, col, new_row, new_col, promotion: str | None = None):
+    def play_turn(self, row: int, col: int, new_row: int, new_col: int, promotion: Optional[str] = None) -> Tuple[bool, str]:
         legal_moves = self.legality.filter_move(row,col)
         if (new_row, new_col) in legal_moves:
             make_unmake = Make_Unmake(self.board)

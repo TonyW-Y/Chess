@@ -1,3 +1,5 @@
+from typing import Optional, List, Tuple, Dict, Any, Union
+
 class Make_Unmake:
     
     def __init__(self, board_obj):
@@ -31,7 +33,7 @@ class Make_Unmake:
             return self.color
 
                 
-    def make_move(self, row, col, new_row, new_col, promotion: str | None = None):
+    def make_move(self, row: int, col: int, new_row: int, new_col: int, promotion: Optional[str] = None) -> List[List[str]]:
         # Clear en passant target by default (will set if a double pawn push occurs)
         self.board_obj.en_passant_target = None
         if self.board[row][col][0] == "b" and self.color == "b":
@@ -49,7 +51,7 @@ class Make_Unmake:
                 
             
         
-    def check_move(self, row, col, new_row, new_col, promotion: str | None = None):
+    def check_move(self, row: int, col: int, new_row: int, new_col: int, promotion: Optional[str] = None) -> None:
         peice = self.board[row][col]
         self.board[row][col] = "--"
         

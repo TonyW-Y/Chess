@@ -1,4 +1,5 @@
 import copy
+from typing import Optional, List, Tuple, Dict, Any, Union
 from .make_unmake import Make_Unmake
 from .legality import Legality
 
@@ -32,7 +33,7 @@ class Chess_Board:
         return "\n".join(" ".join(self.board[row]) for row in range(len(self.board)))
     
     
-    def save_move(self, row, col, new_row, new_col, promotion: str | None = None):
+    def save_move(self, row: int, col: int, new_row: int, new_col: int, promotion: Optional[str] = None) -> List[List[str]]:
         move = Make_Unmake(self)  # pass board object for full state access
         (self.history).append((copy.deepcopy(self.board), copy.deepcopy(self.has_moved), self.color, self.en_passant_target))
         self.board = move.make_move(row, col, new_row, new_col, promotion)
