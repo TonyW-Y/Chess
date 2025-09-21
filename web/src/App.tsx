@@ -41,13 +41,23 @@ export default function App() {
   }
 
   const onUndo = async () => {
-    await undo()
-    await load()
+    try {
+      const newState = await undo();
+      setState(newState);
+      setError(null);
+    } catch (e: any) {
+      setError(e.message);
+    }
   }
 
   const onReset = async () => {
-    await reset()
-    await load()
+    try {
+      const newState = await reset();
+      setState(newState);
+      setError(null);
+    } catch (e: any) {
+      setError(e.message);
+    }
   }
 
   if (loading || !state) return <div className="container"><h2>Loading...</h2></div>

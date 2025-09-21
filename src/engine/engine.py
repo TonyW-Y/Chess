@@ -43,6 +43,11 @@ class Engine:
             return 'stalemate', None
         return 'in_progress', None
         
+    def reset(self):
+        """Reset the game to the initial state."""
+        self.board.reset_board()
+        self.has_moved = self.board.has_moved
+        
 if __name__ == "__main__":
     def print_board(board):
         for row in board.board:  # board.board is your 2D list

@@ -12,8 +12,9 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 # ----- Environment -----
-ENV = os.getenv("ENV", "production")
+ENV = os.getenv("ENV", "development")  # Default to development for local
 IS_PRODUCTION = ENV == "production"
+print(f"Running in {'PRODUCTION' if IS_PRODUCTION else 'DEVELOPMENT'} mode")
 
 # Exact frontend origin (Render)
 FRONTEND_ORIGIN = "https://chess-frontend-fz6z.onrender.com"
@@ -128,9 +129,11 @@ async def reset():
 
 @app.post("/undo")
 async def undo():
-    if not app.state.engine.undo_move():
+    try:
+        app.state.engine.undo()
+        return await get_state()
+    except IndexError:
         raise HTTPException(status_code=400, detail={"error":"No moves to undo","code":"no_moves_to_undo"})
-    return await get_state()
 
 @app.post("/legal")
 async def legal(coord: CoordBody):

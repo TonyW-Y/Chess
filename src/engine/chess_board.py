@@ -32,6 +32,25 @@ class Chess_Board:
     def __str__(self):
         return "\n".join(" ".join(self.board[row]) for row in range(len(self.board)))
     
+    def reset_board(self):
+        """Reset the board to the initial state."""
+        self.board = [
+            ["bR","bN","bB","bQ","bK","bB","bN","bR"], 
+            ["bP","bP","bP","bP","bP","bP","bP","bP"], 
+            ["--","--","--","--","--","--","--","--"],
+            ["--","--","--","--","--","--","--","--"],
+            ["--","--","--","--","--","--","--","--"],
+            ["--","--","--","--","--","--","--","--"],
+            ["wP","wP","wP","wP","wP","wP","wP","wP"], 
+            ["wR","wN","wB","wQ","wK","wB","wN","wR"]
+        ]
+        self.color = "w"
+        self.history = []
+        self.en_passant_target = None
+        self.has_moved = {"bR1":0, "bR2":0, "bK":0,
+                        "wR1":0, "wR2":0, "wK":0}
+        return self.board
+    
     
     def save_move(self, row: int, col: int, new_row: int, new_col: int, promotion: Optional[str] = None) -> List[List[str]]:
         move = Make_Unmake(self)  # pass board object for full state access
